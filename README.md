@@ -71,6 +71,7 @@ Configure no `.env` da aplicação que usa este tema:
 
 ```dotenv
 CADASTROS_AUXILIARES_MENSAGENS_INTEGRACAO=false
+CADASTROS_AUXILIARES_PASSWORD=
 CADASTROS_AUXILIARES_MENSAGENS_ENDPOINT_URL=
 CADASTROS_AUXILIARES_SISTEMA_NAME=
 CADASTROS_AUXILIARES_MENSAGENS_LIMITE=5
@@ -82,6 +83,7 @@ Significado:
 
 - `CADASTROS_AUXILIARES_MENSAGENS_INTEGRACAO`: habilita/desabilita a integração.
 - quando a variável não existir, estiver vazia ou for `false`, a integração fica desabilitada.
+- `CADASTROS_AUXILIARES_PASSWORD`: senha opcional para proteger o endpoint de mensagens em chamadas externas.
 - `CADASTROS_AUXILIARES_MENSAGENS_ENDPOINT_URL`: endpoint `GET` do cadastros-auxiliares (ex.: `https://seu-app/api/mensagens`).
 - `CADASTROS_AUXILIARES_SISTEMA_NAME`: nome do sistema consumidor para aplicar o filtro por sistema (ex.: `cadastros-auxiliares`, `ponto`).
 - `CADASTROS_AUXILIARES_MENSAGENS_LIMITE`: quantidade máxima de mensagens consumidas.
@@ -104,6 +106,12 @@ Comportamento:
 - suporte às variáveis `CADASTROS_AUXILIARES_MENSAGENS_*`.
 - mensagens com botão de fechar (`×`) e auto-ocultação baseada em `CADASTROS_AUXILIARES_MENSAGENS_TIMEOUT`.
 - comportamento silencioso em falha de consulta ao endpoint.
+
+03/07/2025
+- release 2.8.15
+- adicionado variável $dtSlot ao datatable-simples
+- $dtSlot recebe uma view blade renderizada
+- exibe conteúdo da view na parte superior da tabela, a frente da contagem de registros
 
 25/4/2023
 - release 2.8
