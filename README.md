@@ -67,17 +67,20 @@ O tema pode exibir mensagens vindas do sistema
 [uspdev/cadastros-auxiliares](https://github.com/uspdev/cadastros-auxiliares)
 no topo das páginas.
 
+Esta integração nativa do tema cobre somente mensagens.
+Os endpoints de programas (`/api/pos/programas`) são consumidos via biblioteca `uspdev/cadastros-auxiliares-client`.
+
 No fluxo atual do tema:
 - o navegador faz polling no endpoint local do tema: `/_usp-theme/cadastros-auxiliares/mensagens`;
-- o backend do tema consulta este webservice em `CADASTROS_AUXILIARES_MENSAGENS_ENDPOINT_URL`;
+- o backend do tema consulta este webservice no endpoint derivado de `CADASTROS_AUXILIARES_URL` (`/api/mensagens`);
 - `CADASTROS_AUXILIARES_PASSWORD` é enviada apenas no backend (não fica exposta no browser).
 
 Configure no `.env` da aplicação que usa este tema:
 
 ```dotenv
+CADASTROS_AUXILIARES_URL=https://seu-app
 CADASTROS_AUXILIARES_MENSAGENS_INTEGRACAO=false
 CADASTROS_AUXILIARES_PASSWORD=
-CADASTROS_AUXILIARES_MENSAGENS_ENDPOINT_URL=
 CADASTROS_AUXILIARES_SISTEMA_NAME=
 CADASTROS_AUXILIARES_MENSAGENS_LIMITE=5
 CADASTROS_AUXILIARES_MENSAGENS_TIMEOUT=5
@@ -88,9 +91,9 @@ Significado:
 
 - `CADASTROS_AUXILIARES_MENSAGENS_INTEGRACAO`: habilita/desabilita a integração.
 - quando a variável não existir, estiver vazia ou for `false`, a integração fica desabilitada.
+- `CADASTROS_AUXILIARES_URL`: URL base do serviço cadastros-auxiliares (ex.: `https://seu-app`).
 - `CADASTROS_AUXILIARES_PASSWORD`: senha obrigatória para proteger o endpoint de mensagens em chamadas externas.
 - em integrações com `laravel-usp-theme`, a senha é usada no backend do tema (proxy local), sem exposição no navegador.
-- `CADASTROS_AUXILIARES_MENSAGENS_ENDPOINT_URL`: endpoint remoto `GET` do cadastros-auxiliares (ex.: `https://seu-app/api/mensagens`), consumido no backend.
 - `CADASTROS_AUXILIARES_SISTEMA_NAME`: nome do sistema consumidor para aplicar o filtro por sistema (ex.: `cadastros-auxiliares`, `ponto`).
 - `CADASTROS_AUXILIARES_MENSAGENS_LIMITE`: quantidade máxima de mensagens consumidas.
 - `CADASTROS_AUXILIARES_MENSAGENS_TIMEOUT`: tempo em segundos para cada mensagem desaparecer automaticamente.
