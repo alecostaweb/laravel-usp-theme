@@ -7,6 +7,9 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Uspdev\CadastrosAuxiliaresClient\Contracts\MensagensClientInterface;
+use Uspdev\CadastrosAuxiliaresClient\Services\MensagensClient;
+use Uspdev\UspTheme\Services\CadastrosAuxiliaresMensagensService;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -19,6 +22,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->loadViews();
         $this->loadTranslations();
+        $this->loadRoutes();
         $this->publishAssets();
         $this->publishConfig();
 
@@ -48,15 +52,25 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         // configs
+        $this->mergeConfigFrom($this->packagePath('config/laravel-usp-theme.php'), 'laravel-usp-theme');
         $this->mergeConfigFrom($this->packagePath('config/skins.php'), 'laravel-usp-theme');
         $sistemas = require $this->packagePath('config/laravel-usp-theme-sistemas.php');
         $config = $this->app['config']->get('laravel-usp-theme', []);
         $this->app['config']->set('laravel-usp-theme', array_merge($sistemas, $config));
 
+        // Fallback binding for environments where package:discover has not been executed yet.
+        if (
+            interface_exists(MensagensClientInterface::class)
+            && class_exists(MensagensClient::class)
+            && !$this->app->bound(MensagensClientInterface::class)
+        ) {
+            $this->app->singleton(MensagensClientInterface::class, MensagensClient::class);
+        }
+
+        $this->app->singleton(CadastrosAuxiliaresMensagensService::class);
+
         // Facade
-        $this->app->bind('uspTheme', function ($app) {
-            return new UspTheme();
-        });
+        $this->app->bind('uspTheme', UspTheme::class);
     }
 
     private function packagePath($path)
@@ -87,6 +101,11 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             $this->packagePath('resources/assets') => public_path('vendor/laravel-usp-theme'),
         ], 'assets');
+    }
+
+    private function loadRoutes()
+    {
+        $this->loadRoutesFrom($this->packagePath('routes/web.php'));
     }
 
     private function publishConfig()

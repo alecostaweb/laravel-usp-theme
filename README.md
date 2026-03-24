@@ -61,7 +61,62 @@ Este tema foi testado no Laravel 8.x e 11.x mas deve funcionar em outras versõe
 * [Blocos](docs/blocos.md)
 * [Issues](docs/issues.md)
 
+## Integração com cadastros-auxiliares
+
+O tema pode exibir mensagens vindas do sistema
+[uspdev/cadastros-auxiliares](https://github.com/uspdev/cadastros-auxiliares)
+no topo das páginas.
+
+Esta integração nativa do tema cobre somente mensagens.
+Os endpoints de programas (`/api/pos/programas`) são consumidos via biblioteca `uspdev/cadastros-auxiliares-client`.
+
+No fluxo atual do tema:
+- o navegador faz polling no endpoint local do tema: `/_usp-theme/cadastros-auxiliares/mensagens`;
+- o backend do tema consulta este webservice no endpoint derivado de `CADASTROS_AUXILIARES_URL` (`/api/mensagens`);
+- `CADASTROS_AUXILIARES_PASSWORD` é enviada apenas no backend (não fica exposta no browser).
+
+Configure no `.env` da aplicação que usa este tema:
+
+```dotenv
+CADASTROS_AUXILIARES_URL=https://seu-app
+CADASTROS_AUXILIARES_MENSAGENS_INTEGRACAO=false
+CADASTROS_AUXILIARES_PASSWORD=
+CADASTROS_AUXILIARES_SISTEMA_NAME=
+CADASTROS_AUXILIARES_MENSAGENS_LIMITE=5
+CADASTROS_AUXILIARES_MENSAGENS_TIMEOUT=5
+CADASTROS_AUXILIARES_MENSAGENS_REFRESH=30
+```
+
+Significado:
+
+- `CADASTROS_AUXILIARES_MENSAGENS_INTEGRACAO`: habilita/desabilita a integração.
+- quando a variável não existir, estiver vazia ou for `false`, a integração fica desabilitada.
+- `CADASTROS_AUXILIARES_URL`: URL base do serviço cadastros-auxiliares (ex.: `https://seu-app`).
+- `CADASTROS_AUXILIARES_PASSWORD`: senha obrigatória para proteger o endpoint de mensagens em chamadas externas.
+- em integrações com `laravel-usp-theme`, a senha é usada no backend do tema (proxy local), sem exposição no navegador.
+- `CADASTROS_AUXILIARES_SISTEMA_NAME`: nome do sistema consumidor para aplicar o filtro por sistema (ex.: `cadastros-auxiliares`, `ponto`).
+- `CADASTROS_AUXILIARES_MENSAGENS_LIMITE`: quantidade máxima de mensagens consumidas.
+- `CADASTROS_AUXILIARES_MENSAGENS_TIMEOUT`: tempo em segundos para cada mensagem desaparecer automaticamente.
+- `CADASTROS_AUXILIARES_MENSAGENS_REFRESH`: intervalo (em segundos) para atualizar somente a área de mensagens sem recarregar a página.
+
+Comportamento:
+
+- O filtro por sistema só funciona quando `CADASTROS_AUXILIARES_SISTEMA_NAME` estiver configurada com o nome do sistema USPdev (ex.: `CADASTROS_AUXILIARES_SISTEMA_NAME=ponto` para o sistema `uspdev/ponto`).
+- Se `CADASTROS_AUXILIARES_MENSAGENS_TIMEOUT` estiver vazio ou `0`, as mensagens ficam visíveis até o usuário clicar em fechar.
+- A área de mensagens é atualizada periodicamente sem `F5`, conforme `CADASTROS_AUXILIARES_MENSAGENS_REFRESH`.
+- Cada mensagem exibida possui botão de fechar (`×`).
+- O polling no frontend é feito contra endpoint local do tema, evitando envio de credenciais para o cliente.
+- Em caso de falha no endpoint, o comportamento é silencioso (não quebra a página).
+- Mesmo com `config/laravel-usp-theme.php` antigo publicado na aplicação consumidora, os defaults novos desta integração são mesclados pelo pacote.
+
 ## Changelog
+
+02/03/2026
+- release 2.8.24
+- integração opcional com `uspdev/cadastros-auxiliares` para exibição de mensagens no topo das páginas.
+- suporte às variáveis `CADASTROS_AUXILIARES_MENSAGENS_*`.
+- mensagens com botão de fechar (`×`) e auto-ocultação baseada em `CADASTROS_AUXILIARES_MENSAGENS_TIMEOUT`.
+- comportamento silencioso em falha de consulta ao endpoint.
 
 03/07/2025
 - release 2.8.15
