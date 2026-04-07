@@ -81,7 +81,9 @@
         alert.appendChild(document.createElement('br'));
       }
 
-      alert.appendChild(document.createTextNode(mensagem.conteudo || ''));
+      const conteudo = document.createElement('span');
+      conteudo.innerHTML = String(mensagem.conteudo || '');
+      alert.appendChild(conteudo);
 
       const closeButton = document.createElement('button');
       closeButton.type = 'button';
