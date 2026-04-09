@@ -1,4 +1,4 @@
-<div class="flash-message" data-cad-msg-container data-timeout="{{ (int) config('laravel-usp-theme.cadastros_auxiliares_mensagens_timeout', 5) }}">
+<div data-cad-msg-container data-timeout="{{ (int) config('laravel-usp-theme.cadastros_auxiliares_mensagens_timeout', 5) }}">
 </div>
 
 <script>
